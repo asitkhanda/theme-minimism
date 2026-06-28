@@ -5,4 +5,5 @@ tags = ["micro.blog", "blog", "minimal", "responsive"]
 min_version = "0.110.0"
 
 [author]
-  name = "Minimism contributors"
+  name = "Asit Khanda"
+  homepage = "https://github.com/asitkhanda/theme-minimism"

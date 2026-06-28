@@ -4,7 +4,7 @@ A minimalist Hugo theme for [Micro.blog](https://micro.blog/), forked from the o
 
 Alpine itself builds on the Marfa theme, which traces back to [NeoCactus](https://github.com/mmarfil/neocactus/fork) and [Cactus](https://github.com/eudicots/Cactus) for Jekyll.
 
-![Alpine screenshot](https://raw.githubusercontent.com/microdotblog/theme-alpine/master/screenshot/home.png)
+![Minimism screenshot](screenshot/home.png)
 
 ## Features
 
@@ -30,11 +30,27 @@ git remote add upstream https://github.com/microdotblog/theme-alpine.git
 
 ## Deploying to Micro.blog
 
-1. Push your theme to a public GitHub repository (e.g. `https://github.com/asitkhanda/theme-minimism`).
-2. In Micro.blog: **Posts → Plug-ins → Plug-in Directory**, or use **Design → Edit Custom Themes → New Plug-in** to test first.
-3. Clone your repository URL and install the plug-in.
+### Test before publishing
 
-See the [Micro.blog plug-ins documentation](https://help.micro.blog/t/plug-ins/104) for details.
+1. Push your theme to a public GitHub repository: `https://github.com/asitkhanda/theme-minimism`
+2. In Micro.blog: **Design → Edit Custom Themes → New Plug-in**
+3. Enter your repository URL and install the plug-in on a test blog
+4. Confirm the theme renders correctly and accent color settings work under **Plug-in Settings**
+
+### Register in the Plug-in Directory
+
+Once tested, submit the theme for listing:
+
+1. Ensure these files are present in the repo root:
+   - `plugin.json` — title, version, description, and settings fields
+   - `theme.toml` — marks this as a full theme plug-in
+   - `config.json` — default accent color values
+   - `layouts/` — Hugo templates
+   - `static/` — CSS and assets
+2. Register via the link on the [Micro.blog plug-ins documentation](https://help.micro.blog/t/plug-ins/104), providing the GitHub URL above
+3. After approval, users can install from **Posts → Plug-ins → Plug-in Directory**
+
+To publish updates, bump `version` in `plugin.json` and push to GitHub. Users will see an **Upgrade** button in Micro.blog.
 
 ## Theme configuration
 
@@ -102,8 +118,10 @@ For accurate theme work, prefer `npm run dev` (Hugo on port 1313).
 | `layouts/` | Hugo templates (HTML) |
 | `static/assets/css/` | Stylesheets |
 | `config.json` | Default theme parameters |
-| `plugin.json` | Micro.blog theme editor fields |
-| `dev/` | Local Hugo preview site (generated; not deployed) |
+| `plugin.json` | Micro.blog plug-in metadata and settings fields |
+| `theme.toml` | Marks this as a full theme for Micro.blog |
+| `screenshot/` | Preview image for the plug-in directory |
+| `dev/` | Local Hugo preview site (not required for Micro.blog) |
 | `scripts/` | Local setup and feed sync helpers |
 
 ## License
