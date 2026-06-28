@@ -94,11 +94,11 @@ pre {
 }
 
 nav.main-nav a, #footer a, #post-nav a, p a {
-	box-shadow: inset 0 -2px 0 #DEDEDE;
+	box-shadow: inset 0 -2px 0 var(--accent-link-bg, #DEDEDE);
 }
 
 nav.main-nav a:hover, #footer a:hover, #post-nav a:hover, p a:hover {
-	box-shadow: inset 0 -25px 0 #EFEFEF;
+	box-shadow: inset 0 -25px 0 var(--accent-link-bg-hover, #EFEFEF);
 }
 
 .site-menus {
@@ -162,8 +162,47 @@ nav.main-nav {
 .site-image {
 	display: inline-block;
 	width: 26px;
+	height: 26px;
 	border-radius: 13px;
 	margin-top: -5px;
+	object-fit: cover;
+	vertical-align: middle;
+}
+
+@media only screen and (min-width: 900px) {
+	nav.main-nav {
+		padding: 28px 32px 6px;
+	}
+
+	nav.main-nav a {
+		font-size: 15px;
+		margin-left: 18px;
+	}
+
+	.site-title {
+		font-size: 19px;
+		padding-left: 8px;
+		padding-top: 2px;
+		padding-bottom: 8px;
+	}
+
+	.site-title a {
+		margin-left: 10px;
+		vertical-align: middle;
+	}
+
+	.site-image {
+		width: 38px;
+		height: 38px;
+		border-radius: 19px;
+		margin-top: 0;
+	}
+}
+
+@media only screen and (max-width: 899px) {
+	.site-menus {
+		float: none;
+	}
 }
 
 @media only screen and (max-width: 750px) {
@@ -188,5 +227,12 @@ nav.main-nav {
 		margin-left: 30px;
 	}
 
+}
+
+@media (prefers-color-scheme: dark) and (max-width: 899px) {
+	.site-title,
+	.site-menus {
+		margin-left: 0;
+	}
 }
 

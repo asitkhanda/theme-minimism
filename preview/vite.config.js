@@ -10,9 +10,16 @@ export default defineConfig({
   root: __dirname,
   publicDir: path.resolve(__dirname, "../static"),
   server: {
-    port: 5173,
+    port: Number(process.env.PORT) || 5173,
+    strictPort: true,
+    cors: true,
     fs: {
       allow: [path.resolve(__dirname, "..")],
+    },
+  },
+  resolve: {
+    alias: {
+      "@theme-config": path.resolve(__dirname, "../config.json"),
     },
   },
 });

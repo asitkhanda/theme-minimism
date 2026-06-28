@@ -1,31 +1,9 @@
 <style>
-
-.site-title {
-	display: inline-block;
-	font-size: 14px;
-	font-weight: 500;
-	line-height: 1.35;
-	padding-left: 5px;
-	margin-top: 0px;
-	margin-bottom: 5px;
-	padding-top: 5px;
-	padding-bottom: 10px;
+/* Hugo/Micro.blog defaults apply only before the user picks an accent in the browser */
+:root:not([data-accent]) {
+	--accent-text: {{ .Site.Params.alpine_accent_text_color | default "#f29c38" }};
+	--accent-hover: {{ .Site.Params.alpine_hover_background_color | default "#fffee4" }};
+	--accent-link-bg: color-mix(in srgb, {{ .Site.Params.alpine_accent_text_color | default "#f29c38" }} 22%, transparent);
+	--accent-link-bg-hover: color-mix(in srgb, {{ .Site.Params.alpine_accent_text_color | default "#f29c38" }} 35%, transparent);
 }
-
-nav.main-nav a.cta {
-	background: {{ .Site.Params.alpine_accent_background_color }};
-	color: {{ .Site.Params.alpine_accent_text_color }};
-	padding: 6px 14px;
-	border: 2px solid {{ .Site.Params.alpine_accent_text_color }};
-	border-radius: 20px;
-	white-space: nowrap;
-	box-shadow: none;
-}
-
-nav.main-nav a.cta:hover {
-	background: {{ .Site.Params.alpine_hover_background_color }};
-	color: {{ .Site.Params.alpine_accent_text_color }};
-	margin-left: 12px;
-}
-
 </style>

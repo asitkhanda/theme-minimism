@@ -2,7 +2,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta content="{{ .Site.Author.name }}" name="author">
+  {{ partial "theme-init.html" . }}
+  <meta content="{{ .Site.Params.author.name }}" name="author">
 
   <title>
       {{- block "title" . -}}
@@ -16,6 +17,7 @@
   <link href="{{ "assets/css/style.css" | relURL }}?{{ .Site.Params.theme_seconds }}" rel="stylesheet">
   <link href="{{ "assets/css/highlight.css" | relURL }}?{{ .Site.Params.theme_seconds }}" rel="stylesheet">
   <link href="{{ "assets/css/alpine.css" | relURL }}?{{ .Site.Params.theme_seconds }}" rel="stylesheet">
+  <link href="{{ "assets/css/theme.css" | relURL }}?{{ .Site.Params.theme_seconds }}" rel="stylesheet">
   {{ partialCached "alpine.html" . }}
   {{ partial "microblog_head.html" . }}
 </head>

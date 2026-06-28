@@ -1,0 +1,327 @@
+<script>
+(function () {
+  var STORAGE_THEME = "alpine-theme";
+  var STORAGE_ACCENT = "alpine-accent";
+  var DEFAULT_ACCENT = "orange";
+
+  var PALETTE = {
+    orange: {
+      light: { text: "#f29c38", hover: "#fff3e0", linkBg: "rgba(242, 156, 56, 0.22)", linkBgHover: "rgba(242, 156, 56, 0.35)" },
+      dark: { text: "#f29c38", hover: "#3d2e1a", linkBg: "rgba(242, 156, 56, 0.28)", linkBgHover: "rgba(242, 156, 56, 0.42)" },
+    },
+    pink: {
+      light: { text: "#ee4792", hover: "#fce4ef", linkBg: "rgba(238, 71, 146, 0.2)", linkBgHover: "rgba(238, 71, 146, 0.32)" },
+      dark: { text: "#ee4792", hover: "#3d1f2e", linkBg: "rgba(238, 71, 146, 0.28)", linkBgHover: "rgba(238, 71, 146, 0.42)" },
+    },
+    blue: {
+      light: { text: "#2563eb", hover: "#dbeafe", linkBg: "rgba(37, 99, 235, 0.2)", linkBgHover: "rgba(37, 99, 235, 0.32)" },
+      dark: { text: "#2563eb", hover: "#1e2a45", linkBg: "rgba(37, 99, 235, 0.28)", linkBgHover: "rgba(37, 99, 235, 0.42)" },
+    },
+    green: {
+      light: { text: "#059669", hover: "#d1fae5", linkBg: "rgba(5, 150, 105, 0.2)", linkBgHover: "rgba(5, 150, 105, 0.32)" },
+      dark: { text: "#059669", hover: "#1a3329", linkBg: "rgba(5, 150, 105, 0.28)", linkBgHover: "rgba(5, 150, 105, 0.42)" },
+    },
+    purple: {
+      light: { text: "#7c3aed", hover: "#ede9fe", linkBg: "rgba(124, 58, 237, 0.2)", linkBgHover: "rgba(124, 58, 237, 0.32)" },
+      dark: { text: "#7c3aed", hover: "#2a1f45", linkBg: "rgba(124, 58, 237, 0.28)", linkBgHover: "rgba(124, 58, 237, 0.42)" },
+    },
+    red: {
+      light: { text: "#dc2626", hover: "#fee2e2", linkBg: "rgba(220, 38, 38, 0.2)", linkBgHover: "rgba(220, 38, 38, 0.32)" },
+      dark: { text: "#dc2626", hover: "#3d1a1a", linkBg: "rgba(220, 38, 38, 0.28)", linkBgHover: "rgba(220, 38, 38, 0.42)" },
+    },
+  };
+
+  function getTheme() {
+    try {
+      return localStorage.getItem(STORAGE_THEME) || "light";
+    } catch (error) {
+      return "light";
+    }
+  }
+
+  function getAccent() {
+    try {
+      return localStorage.getItem(STORAGE_ACCENT) || DEFAULT_ACCENT;
+    } catch (error) {
+      return DEFAULT_ACCENT;
+    }
+  }
+
+  function getAccentColors(accent) {
+    var palette = PALETTE[accent] || PALETTE[DEFAULT_ACCENT];
+    return getTheme() === "dark" ? palette.dark : palette.light;
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
+    applyAccent(getAccent());
+  }
+
+  function applyAccent(accent) {
+    var root = document.documentElement;
+    var colors = getAccentColors(accent);
+
+    root.setAttribute("data-accent", accent);
+    root.style.setProperty("--accent-text", colors.text);
+    root.style.setProperty("--accent-hover", colors.hover);
+    root.style.setProperty("--accent-link-bg", colors.linkBg);
+    root.style.setProperty("--accent-link-bg-hover", colors.linkBgHover);
+  }
+
+  function saveTheme(theme) {
+    try {
+      localStorage.setItem(STORAGE_THEME, theme);
+    } catch (error) {
+      /* ignore */
+    }
+  }
+
+  function saveAccent(accent) {
+    try {
+      localStorage.setItem(STORAGE_ACCENT, accent);
+    } catch (error) {
+      /* ignore */
+    }
+  }
+
+  function toggleTheme() {
+    var next = getTheme() === "dark" ? "light" : "dark";
+    saveTheme(next);
+    applyTheme(next);
+  }
+
+  function updateAccentSelection(accent) {
+    document.querySelectorAll(".accent-option").forEach(function (option) {
+      var isSelected = option.getAttribute("data-accent") === accent;
+      option.setAttribute("aria-selected", isSelected ? "true" : "false");
+    });
+  }
+
+  function selectAccent(accent) {
+    applyAccent(accent);
+    saveAccent(accent);
+    updateAccentSelection(accent);
+  }
+
+  function closeAccentMenu(picker, toggle, menu) {
+    picker.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    menu.setAttribute("aria-hidden", "true");
+  }
+
+  function openAccentMenu(picker, toggle, menu) {
+    var navMore = document.getElementById("nav-more");
+    if (navMore && navMore.classList.contains("is-open")) {
+      navMore.classList.remove("is-open");
+      var navMoreToggle = document.getElementById("nav-more-toggle");
+      var navMoreMenu = document.getElementById("nav-more-menu");
+      if (navMoreToggle) navMoreToggle.setAttribute("aria-expanded", "false");
+      if (navMoreMenu) navMoreMenu.setAttribute("aria-hidden", "true");
+    }
+    picker.classList.add("is-open");
+    toggle.setAttribute("aria-expanded", "true");
+    menu.setAttribute("aria-hidden", "false");
+  }
+
+  function toggleAccentMenu(picker, toggle, menu) {
+    if (picker.classList.contains("is-open")) {
+      closeAccentMenu(picker, toggle, menu);
+    } else {
+      openAccentMenu(picker, toggle, menu);
+    }
+  }
+
+  function initMobileNav(accentPicker, accentToggle, accentMenu, closeAccentMenuFn) {
+    var nav = document.getElementById("main-nav");
+    var toggle = document.getElementById("nav-menu-toggle");
+    var menus = document.getElementById("site-menus");
+    var mobileQuery = window.matchMedia("(max-width: 899px)");
+
+    if (!nav || !toggle || !menus) {
+      return;
+    }
+
+    function closeSubmenus() {
+      var navMore = document.getElementById("nav-more");
+      var navMoreToggle = document.getElementById("nav-more-toggle");
+      var navMoreMenu = document.getElementById("nav-more-menu");
+      if (navMore) navMore.classList.remove("is-open");
+      if (navMoreToggle) navMoreToggle.setAttribute("aria-expanded", "false");
+      if (navMoreMenu) navMoreMenu.setAttribute("aria-hidden", "true");
+      if (accentPicker && accentToggle && accentMenu && closeAccentMenuFn) {
+        closeAccentMenuFn(accentPicker, accentToggle, accentMenu);
+      }
+    }
+
+    function syncMobileMoreMenu() {
+      var navMoreMenu = document.getElementById("nav-more-menu");
+      var navMore = document.getElementById("nav-more");
+      if (!navMoreMenu) {
+        return;
+      }
+      if (mobileQuery.matches) {
+        navMoreMenu.setAttribute("aria-hidden", "false");
+      } else if (navMore && !navMore.classList.contains("is-open")) {
+        navMoreMenu.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    function closeMobileNav() {
+      nav.classList.remove("is-menu-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Open menu");
+      closeSubmenus();
+    }
+
+    function openMobileNav() {
+      nav.classList.add("is-menu-open");
+      toggle.setAttribute("aria-expanded", "true");
+      toggle.setAttribute("aria-label", "Close menu");
+    }
+
+    toggle.addEventListener("click", function (event) {
+      event.stopPropagation();
+      if (!mobileQuery.matches) {
+        return;
+      }
+      if (nav.classList.contains("is-menu-open")) {
+        closeMobileNav();
+      } else {
+        openMobileNav();
+      }
+    });
+
+    menus.querySelectorAll("a[href]").forEach(function (link) {
+      link.addEventListener("click", function () {
+        if (mobileQuery.matches) {
+          closeMobileNav();
+        }
+      });
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!mobileQuery.matches || !nav.classList.contains("is-menu-open")) {
+        return;
+      }
+      if (!nav.contains(event.target)) {
+        closeMobileNav();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && mobileQuery.matches && nav.classList.contains("is-menu-open")) {
+        closeMobileNav();
+      }
+    });
+
+    mobileQuery.addEventListener("change", function () {
+      syncMobileMoreMenu();
+      if (!mobileQuery.matches) {
+        closeMobileNav();
+      }
+    });
+
+    syncMobileMoreMenu();
+  }
+
+  function initNavMore(accentPicker, accentToggle, accentMenu) {
+    var navMore = document.getElementById("nav-more");
+    var navMoreToggle = document.getElementById("nav-more-toggle");
+    var navMoreMenu = document.getElementById("nav-more-menu");
+
+    if (!navMore || !navMoreToggle || !navMoreMenu) {
+      return;
+    }
+
+    function closeNavMore() {
+      navMore.classList.remove("is-open");
+      navMoreToggle.setAttribute("aria-expanded", "false");
+      navMoreMenu.setAttribute("aria-hidden", "true");
+    }
+
+    function openNavMore() {
+      if (accentPicker && accentToggle && accentMenu) {
+        closeAccentMenu(accentPicker, accentToggle, accentMenu);
+      }
+      navMore.classList.add("is-open");
+      navMoreToggle.setAttribute("aria-expanded", "true");
+      navMoreMenu.setAttribute("aria-hidden", "false");
+    }
+
+    navMoreToggle.addEventListener("click", function (event) {
+      event.stopPropagation();
+      if (navMore.classList.contains("is-open")) {
+        closeNavMore();
+      } else {
+        openNavMore();
+      }
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!navMore.contains(event.target)) {
+        closeNavMore();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeNavMore();
+      }
+    });
+  }
+
+  function init() {
+    var currentAccent = getAccent();
+    applyTheme(getTheme());
+    updateAccentSelection(currentAccent);
+
+    var themeToggle = document.getElementById("theme-toggle");
+    var accentPicker = document.getElementById("accent-picker");
+    var accentToggle = document.getElementById("accent-toggle");
+    var accentMenu = document.getElementById("accent-menu");
+
+    if (themeToggle) {
+      themeToggle.addEventListener("click", toggleTheme);
+    }
+
+    if (accentPicker && accentToggle && accentMenu) {
+      closeAccentMenu(accentPicker, accentToggle, accentMenu);
+
+      accentToggle.addEventListener("click", function (event) {
+        event.stopPropagation();
+        toggleAccentMenu(accentPicker, accentToggle, accentMenu);
+      });
+
+      accentMenu.querySelectorAll(".accent-option").forEach(function (option) {
+        option.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          selectAccent(option.getAttribute("data-accent"));
+          closeAccentMenu(accentPicker, accentToggle, accentMenu);
+        });
+      });
+
+      document.addEventListener("click", function (event) {
+        if (!accentPicker.contains(event.target)) {
+          closeAccentMenu(accentPicker, accentToggle, accentMenu);
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeAccentMenu(accentPicker, accentToggle, accentMenu);
+        }
+      });
+    }
+
+    initNavMore(accentPicker, accentToggle, accentMenu);
+    initMobileNav(accentPicker, accentToggle, accentMenu, closeAccentMenu);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>

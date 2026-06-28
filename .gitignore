@@ -1,5 +1,9 @@
-
 _site/
 .DS_Store
 node_modules/
 preview/dist/
+dev/public/
+dev/themes/theme-blank/
+dev/content/post/
+dev/config.toml
+dev/tools/

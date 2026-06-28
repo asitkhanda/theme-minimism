@@ -157,13 +157,13 @@ a {
 nav.main-nav a, #footer a, #post-nav a, p a {
 	color: #000;
 	font-weight: 500;
-	box-shadow: inset 0 -2px 0 #fcdae9;
+	box-shadow: inset 0 -2px 0 var(--accent-link-bg, #fcdae9);
 	transition: all .35s;
   transition-timing-function: cubic-bezier(.7, 0, .3, 1);
 }
 
 nav.main-nav a:hover, #footer a:hover, #post-nav a:hover, p a:hover {
-	box-shadow: inset 0 -25px 0 #fcdae9;
+	box-shadow: inset 0 -25px 0 var(--accent-link-bg-hover, #fcdae9);
 }
 
 

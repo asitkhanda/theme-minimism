@@ -3,9 +3,18 @@
   "private": true,
   "description": "Custom Alpine theme for asit.blog with local preview and Agentation feedback",
   "scripts": {
-    "dev": "npm run dev --prefix preview",
-    "dev:agentation": "npm run dev --prefix preview & npx agentation-mcp server",
+    "setup": "node scripts/setup-dev.mjs",
+    "sync": "node scripts/sync-feed.mjs",
+    "dev": "npm run setup && npm run sync && concurrently -k -n hugo,agentation,overlay -c blue,green,magenta \"hugo -s dev server -D --port 1313\" \"npx agentation-mcp server\" \"npm run dev:overlay --prefix preview\"",
+    "dev:hugo": "hugo -s dev server -D --port 1313",
+    "dev:agentation": "npx agentation-mcp server",
+    "dev:overlay": "npm run dev:overlay --prefix preview",
+    "build": "npm run setup && npm run sync && hugo -s dev -D",
+    "dev:preview": "npm run dev --prefix preview",
     "agentation:doctor": "npx agentation-mcp doctor",
     "install:preview": "npm install --prefix preview"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
   }
 }

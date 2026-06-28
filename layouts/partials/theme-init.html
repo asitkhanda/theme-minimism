@@ -1,0 +1,10 @@
+<script>
+(function () {
+  try {
+    var theme = localStorage.getItem("alpine-theme");
+    var accent = localStorage.getItem("alpine-accent");
+    if (theme) document.documentElement.setAttribute("data-theme", theme);
+    if (accent) document.documentElement.setAttribute("data-accent", accent);
+  } catch (e) {}
+})();
+</script>

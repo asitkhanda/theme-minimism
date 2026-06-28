@@ -1,45 +1,69 @@
-const posts = [
-  {
-    title: null,
-    content:
-      "Another successful session of CTRL + VIBES over the weekend. Explored a few product ideas and learnt about the art of pitching as well.",
-    date: "1:19 AM, Jun 28",
-  },
-  {
-    title: "Hosted my first session",
-    content:
-      "Got to host my first session of the year yesterday, all thanks to my OG Group - After Office Hours. We talked about how not to apply for jobs.",
-    date: "12:55 AM, Jun 21",
-  },
-  {
-    title: null,
-    content:
-      "Attended the Headout design event yesterday, amazing insights and fresh new perspectives. Short, quick and precise.",
-    date: "10:52 PM, Jun 14",
-  },
-];
+import { useEffect, useMemo, useState } from "react";
+import themeConfig from "../../config.json";
+
+const FEED_URL = import.meta.env.VITE_FEED_URL ?? "https://asit.blog/feed.json";
+
+function formatDate(isoDate) {
+  return new Date(isoDate).toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function AccentStyles() {
+  const params = themeConfig.params ?? {};
+  const css = useMemo(
+    () => `
+nav.main-nav a.cta {
+  background: ${params.alpine_accent_background_color ?? "#ffffff"};
+  color: ${params.alpine_accent_text_color ?? "#f29c38"};
+  border-color: ${params.alpine_accent_text_color ?? "#f29c38"};
+}
+nav.main-nav a.cta:hover {
+  background: ${params.alpine_hover_background_color ?? "#fffee4"};
+  color: ${params.alpine_accent_text_color ?? "#f29c38"};
+}
+`,
+    [params],
+  );
+
+  return <style>{css}</style>;
+}
 
 function PostItem({ post }) {
+  const hasTitle = Boolean(post.title?.trim());
+
   return (
     <li>
       <article className="h-entry">
-        {post.title ? (
+        {hasTitle ? (
           <section className="post-body">
             <header>
               <h2>
-                <a href="#" className="p-name">
+                <a href={post.url} className="p-name">
                   {post.title}
                 </a>
               </h2>
             </header>
-            <section className="post-body e-content">{post.content}</section>
+            <section
+              className="post-body e-content"
+              dangerouslySetInnerHTML={{ __html: post.content_html }}
+            />
           </section>
         ) : (
-          <div className="e-content">{post.content}</div>
+          <div
+            className="e-content"
+            dangerouslySetInnerHTML={{ __html: post.content_html }}
+          />
         )}
-        <a href="#" className="u-url">
+        <a href={post.url} className="u-url">
           <aside className="dates">
-            <time className="dt-published">→ {post.date}</time>
+            <time className="dt-published">
+              → {formatDate(post.date_published)}
+            </time>
           </aside>
         </a>
       </article>
@@ -51,35 +75,81 @@ function PostItem({ post }) {
 }
 
 export default function ThemePreview() {
+  const [feed, setFeed] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch(FEED_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Feed request failed (${response.status})`);
+        }
+        return response.json();
+      })
+      .then(setFeed)
+      .catch((fetchError) => setError(fetchError.message));
+  }, []);
+
+  const avatar =
+    feed?.icon ??
+    "https://micro.blog/images/default-avatar.png";
+  const siteTitle = feed?.title ?? "Asit Khanda";
+
   return (
     <>
+      <AccentStyles />
       <nav className="main-nav">
         <div className="site-title">
           <img
-            src="https://micro.blog/images/default-avatar.png"
-            width="25"
-            height="25"
+            src={avatar}
             className="site-image"
-            alt=""
+            alt={siteTitle}
           />
-          <a href="/">Asit Khanda</a>
+          <a href="/">{siteTitle}</a>
         </div>
         <div className="site-menus">
-          <a href="#">Archive</a>
-          <a href="#">Photos</a>
-          <a href="#">About</a>
-          <a className="cta" href="https://micro.blog/asit" rel="me">
-            Also on Micro.blog
-          </a>
+          <a href="/about/">About</a>
+          <div className="nav-more" id="nav-more">
+            <button
+              type="button"
+              className="nav-more-toggle"
+              id="nav-more-toggle"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="nav-more-menu"
+            >
+              More
+            </button>
+            <div
+              className="nav-more-menu"
+              id="nav-more-menu"
+              role="menu"
+              aria-label="More pages"
+              aria-hidden="true"
+            >
+              <a href="/archive/" role="menuitem">
+                Archive
+              </a>
+              <a href="/photos/" role="menuitem">
+                Photos
+              </a>
+            </div>
+          </div>
         </div>
       </nav>
 
       <section id="wrapper">
-        <ul id="post-list" className="h-feed">
-          {posts.map((post, index) => (
-            <PostItem key={index} post={post} />
-          ))}
-        </ul>
+        {error ? (
+          <p>Could not load feed: {error}</p>
+        ) : !feed ? (
+          <p>Loading posts from {FEED_URL}…</p>
+        ) : (
+          <ul id="post-list" className="h-feed">
+            {feed.items.map((post) => (
+              <PostItem key={post.id} post={post} />
+            ))}
+          </ul>
+        )}
       </section>
 
       <footer id="footer">

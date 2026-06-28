@@ -1,0 +1,56 @@
+<div class="theme-controls">
+	<button type="button" class="theme-control-btn" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+		<span class="theme-icon theme-icon-sun" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="12" cy="12" r="4"></circle>
+				<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+			</svg>
+		</span>
+		<span class="theme-icon theme-icon-moon" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+			</svg>
+		</span>
+	</button>
+
+	<div class="accent-picker" id="accent-picker">
+		<button
+			type="button"
+			class="theme-control-btn theme-accent-btn"
+			id="accent-toggle"
+			aria-label="Choose accent color"
+			title="Choose accent color"
+			aria-haspopup="listbox"
+			aria-expanded="false"
+			aria-controls="accent-menu"
+		>
+			<span class="accent-swatch" aria-hidden="true"></span>
+		</button>
+		<div class="accent-menu" id="accent-menu" role="listbox" aria-label="Accent colors" aria-hidden="true">
+			<button type="button" class="accent-option" role="option" data-accent="orange" aria-selected="false">
+				<span class="accent-option-swatch" style="background-color: #f29c38;"></span>
+				<span class="accent-option-label">Orange</span>
+			</button>
+			<button type="button" class="accent-option" role="option" data-accent="pink" aria-selected="false">
+				<span class="accent-option-swatch" style="background-color: #ee4792;"></span>
+				<span class="accent-option-label">Pink</span>
+			</button>
+			<button type="button" class="accent-option" role="option" data-accent="blue" aria-selected="false">
+				<span class="accent-option-swatch" style="background-color: #2563eb;"></span>
+				<span class="accent-option-label">Blue</span>
+			</button>
+			<button type="button" class="accent-option" role="option" data-accent="green" aria-selected="false">
+				<span class="accent-option-swatch" style="background-color: #059669;"></span>
+				<span class="accent-option-label">Green</span>
+			</button>
+			<button type="button" class="accent-option" role="option" data-accent="purple" aria-selected="false">
+				<span class="accent-option-swatch" style="background-color: #7c3aed;"></span>
+				<span class="accent-option-label">Purple</span>
+			</button>
+			<button type="button" class="accent-option" role="option" data-accent="red" aria-selected="false">
+				<span class="accent-option-swatch" style="background-color: #dc2626;"></span>
+				<span class="accent-option-label">Red</span>
+			</button>
+		</div>
+	</div>
+</div>

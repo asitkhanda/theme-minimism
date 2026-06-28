@@ -1,11 +1,31 @@
-<nav class="main-nav">
+<nav class="main-nav" id="main-nav">
 
 	<div class="site-title">
-		<img src="{{ .Site.Author.avatar }}" width="25" height="25" class="site-image">		
+		<img src="{{ .Site.Params.author.avatar }}" class="site-image" alt="{{ .Site.Title }}">		
 		<a href="/">{{ .Site.Title }}</a>
 	</div>
 
-	<div class="site-menus">
+	<button
+		type="button"
+		class="theme-control-btn nav-menu-toggle"
+		id="nav-menu-toggle"
+		aria-label="Open menu"
+		aria-expanded="false"
+		aria-controls="site-menus"
+	>
+		<span class="theme-icon nav-menu-icon nav-menu-icon-open" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+				<path d="M4 7h16M4 12h16M4 17h16"></path>
+			</svg>
+		</span>
+		<span class="theme-icon nav-menu-icon nav-menu-icon-close" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+				<path d="M6 6l12 12M18 6L6 18"></path>
+			</svg>
+		</span>
+	</button>
+
+	<div class="site-menus" id="site-menus">
 
 	{{ if ne .IsHome true }}
 <!--
@@ -13,15 +33,63 @@
 -->
 	{{ end }}
 
-	{{ range .Site.Menus.main }}
-		{{ if .Page.Params.redirect_url }}
-			<a href="{{ .Page.Params.redirect_url }}">{{ .Name }}</a>
-		{{ else }}
-			<a href="{{ .URL | relLangURL | safeURL }}">{{ .Name }}</a>
+	{{ $archive := index (where .Site.Menus.main "Name" "Archive") 0 }}
+	{{ $photos := index (where .Site.Menus.main "Name" "Photos") 0 }}
+
+	{{ range .Site.Menus.main.ByWeight }}
+		{{ if and (ne .Name "Archive") (ne .Name "Photos") }}
+			{{ if and .Page .Page.Params.redirect_url }}
+				<a href="{{ .Page.Params.redirect_url }}">{{ .Name }}</a>
+			{{ else }}
+				<a href="{{ .URL | relLangURL | safeURL }}">{{ .Name }}</a>
+			{{ end }}
 		{{ end }}
 	{{ end }}
 
-	<a class="cta" href="https://micro.blog/{{ .Site.Author.username }}" rel="me">Also on Micro.blog</a>
+	{{ if or $archive $photos }}
+	<div class="nav-more" id="nav-more">
+		<button
+			type="button"
+			class="nav-more-toggle"
+			id="nav-more-toggle"
+			aria-haspopup="menu"
+			aria-expanded="false"
+			aria-controls="nav-more-menu"
+		>More</button>
+		<div class="accent-menu nav-more-menu" id="nav-more-menu" role="menu" aria-label="More pages" aria-hidden="true">
+			{{ with $archive }}
+				{{ $href := .URL | relLangURL | safeURL }}
+				{{ if and .Page .Page.Params.redirect_url }}
+					{{ $href = .Page.Params.redirect_url }}
+				{{ end }}
+				<a
+					href="{{ $href }}"
+					class="accent-option nav-more-option"
+					role="menuitem"
+					{{ if eq $.RelPermalink ($href | relLangURL) }}aria-current="page"{{ end }}
+				>
+					<span class="accent-option-label">{{ .Name }}</span>
+				</a>
+			{{ end }}
+			{{ with $photos }}
+				{{ $href := .URL | relLangURL | safeURL }}
+				{{ if and .Page .Page.Params.redirect_url }}
+					{{ $href = .Page.Params.redirect_url }}
+				{{ end }}
+				<a
+					href="{{ $href }}"
+					class="accent-option nav-more-option"
+					role="menuitem"
+					{{ if eq $.RelPermalink ($href | relLangURL) }}aria-current="page"{{ end }}
+				>
+					<span class="accent-option-label">{{ .Name }}</span>
+				</a>
+			{{ end }}
+		</div>
+	</div>
+	{{ end }}
+
+	{{ partial "theme-controls.html" . }}
 
 	</div>
 </nav>

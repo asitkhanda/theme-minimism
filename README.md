@@ -13,39 +13,66 @@ Hugo theme for Micro.blog, based on Marfa theme, which was based on [NeoCactus](
 | `origin` | `https://github.com/asitkhanda/theme-alpine` (your fork) |
 | `upstream` | `https://github.com/microdotblog/theme-alpine` (official theme) |
 
-## Local preview with Agentation
+## Local Hugo preview (recommended)
 
-This repo includes a local preview app so you can iterate on the theme and leave visual feedback via [Agentation](https://www.agentation.com/).
+This uses the **real Hugo templates** with live content from your JSON Feed and accent colors from `config.json` — the closest match to production on Micro.blog.
 
-### Setup
+### First-time setup
 
 ```bash
-npm run install:preview
+npm run setup    # clones theme-blank, links this repo as theme-alpine
+npm run sync     # fetches https://asit.blog/feed.json → dev/content/post/
 ```
 
-### Run preview + Agentation MCP server
-
-In one terminal, start the preview:
+### Run the dev server
 
 ```bash
 npm run dev
 ```
 
-In another terminal, start the Agentation MCP server (or rely on the project `.cursor/mcp.json` config in Cursor):
+This starts three services together:
 
-```bash
-npx agentation-mcp server
-```
+| Service | URL | Purpose |
+|---------|-----|---------|
+| Hugo | [http://localhost:1313](http://localhost:1313) | Real theme preview |
+| Agentation overlay | port 5174 (background) | Toolbar script injected into Hugo pages |
+| Agentation MCP | [http://localhost:4747](http://localhost:4747) | Syncs annotations to Cursor |
 
-Open [http://localhost:5173](http://localhost:5173), annotate elements in the browser, and your Cursor agent will receive feedback via the Agentation MCP tools.
+Open **http://localhost:1313**, click the Agentation toolbar, and annotate any element. Your Cursor agent receives feedback via the Agentation MCP tools.
 
-Verify setup:
+Verify Agentation:
 
 ```bash
 npm run agentation:doctor
 ```
 
-### Deploying to Micro.blog
+### Sync options
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `FEED_URL` | `https://asit.blog/feed.json` | JSON Feed to import |
+| `BASE_URL` | `http://localhost:1313/` | Hugo `baseURL` for local links |
+
+Example:
+
+```bash
+FEED_URL=https://asit.blog/feed.json npm run sync
+```
+
+Accent colors (`alpine_accent_*`) are read from the root [`config.json`](config.json) when generating `dev/config.toml`.
+
+## Standalone React preview (optional)
+
+If you only want the React mock (without Hugo), use:
+
+```bash
+npm run install:preview
+npm run dev:preview     # http://localhost:5173
+```
+
+For theme work, use `npm run dev` instead — Hugo + Agentation on port 1313 is the recommended workflow.
+
+## Deploying to Micro.blog
 
 1. Push changes to your GitHub fork.
 2. In Micro.blog: **Posts → Design → Edit Custom Themes → New Theme**.
