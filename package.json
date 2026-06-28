@@ -1,0 +1,11 @@
+{
+  "name": "theme-alpine",
+  "private": true,
+  "description": "Custom Alpine theme for asit.blog with local preview and Agentation feedback",
+  "scripts": {
+    "dev": "npm run dev --prefix preview",
+    "dev:agentation": "npm run dev --prefix preview & npx agentation-mcp server",
+    "agentation:doctor": "npx agentation-mcp doctor",
+    "install:preview": "npm install --prefix preview"
+  }
+}
